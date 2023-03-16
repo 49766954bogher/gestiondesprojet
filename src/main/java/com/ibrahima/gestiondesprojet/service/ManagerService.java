@@ -1,19 +1,42 @@
 package com.ibrahima.gestiondesprojet.service;
 
-import com.ibrahima.gestiondesprojet.entity.User;
+import com.ibrahima.gestiondesprojet.dao.ManagerDao;
+import com.ibrahima.gestiondesprojet.entity.Manager;
+import com.ibrahima.gestiondesprojet.repository.ManagerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ManagerService {
-    void createUser(User user);
+@Service
+public class ManagerService {
 
-    List<User> getUsers();
+    @Autowired
+    private  ManagerRepository managerRepository;
+    public ManagerService(ManagerRepository managerRepository) {
+        this.managerRepository = managerRepository;;
+    }
 
-    User login(String username, String password);
+    public List<Manager> getAllManagers() {
+        return managerRepository.findAll();
+    }
 
-    User getUserById(Integer id);
 
-    void deleteUserById(Integer id);
 
-    void editUser(Integer id);
+
+    public void update(ManagerDao managerDao, Long id) {
+        Manager manager = managerRepository.findById(id).orElseThrow();
+    }
+    public void add(ManagerDao managerDao) {}
+
+    public void delete(Long id) {
+        managerRepository.deleteById(id);
+    }
+
+    public Optional<Manager> getManager(Long id){
+        return managerRepository.findById(id);
+    }
+
+
 }

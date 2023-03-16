@@ -1,20 +1,67 @@
 package com.ibrahima.gestiondesprojet.service;
 
 import com.ibrahima.gestiondesprojet.entity.Project;
+import com.ibrahima.gestiondesprojet.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.*;
 
-public interface ProjectService {
-    Iterable<Project> getAllProject();
+@Service
+public class ProjectService {
 
-    Project createProject(Project project ) ;
+    @Autowired
+    private ProjectRepository projectRepository;
 
-    void editProjectById(Integer id);
+
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
+    }
 
 
-    void deleteProjectById(Integer id);
+    public List<Project> getProjectWithSorting(String field) {
+        return projectRepository.findAll(Sort.by(Sort.Direction.ASC, field));
+    }
 
-    void deleteProjet(Project project);
-    Date getDateByProject(String projectName);
-    String getStatusForProject(String projectName);
+    public Page<Project> getProjectWithPagination(int offset, int pageSize) {
+        Page<Project> projectPage = projectRepository.findAll(PageRequest.of(offset, pageSize));
+        return projectPage;
+    }
+
+    public Page<Project> getProjectWithPaginationAndSorting(int offset, int pageSize, String field) {
+        Page<Project> projectPage = projectRepository.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
+        return projectPage;
+    }
+
+
+    public List<Project> listAllProject(String keyword) {
+        if (keyword != null) {
+            return projectRepository.search(keyword);
+        }
+        return projectRepository.findAll();
+    }
+
+    public Project addProject(Project project) {
+        return projectRepository.save(project);
+    }
+
+    public List<Project> findProject(String keyword) {
+        if (keyword != null) {
+            return projectRepository.search(keyword);
+
+        }
+        return (List<Project>) projectRepository.findAll();
+
+    }
+
+
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
+    }
+
+
 }
